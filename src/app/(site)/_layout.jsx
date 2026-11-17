@@ -7,6 +7,10 @@ import { COLORS } from '@/constants/theme';
 import { Navbar } from '@/components/layout/Navbar';
 import { NavContents } from '@/components/layout/NavContents';
 
+export const unstable_settings = {
+  anchor: 'index',
+};
+
 export default function SiteLayout() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>

@@ -1,32 +1,100 @@
 import { useRouter } from 'expo-router';
-import { Facebook, Instagram, Mail, MapPin, Twitter, Youtube } from 'lucide-react-native';
+import { Mail, MapPin } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import Svg, { Line, Path, Rect } from 'react-native-svg';
 
 import { FALLBACK_CATEGORIES } from '@/constants/fallbackCategories';
 import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/theme';
 import api from '@/services/api';
 
+function YoutubeIcon({ size = 16, color = COLORS.white }) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round">
+      <Path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <Path d="m10 15 5-3-5-3v6Z" />
+    </Svg>
+  );
+}
+
+function TwitterIcon({ size = 16, color = COLORS.white }) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round">
+      <Path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+    </Svg>
+  );
+}
+
+function FacebookIcon({ size = 16, color = COLORS.white }) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round">
+      <Path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </Svg>
+  );
+}
+
+function InstagramIcon({ size = 16, color = COLORS.white }) {
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round">
+      <Rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <Path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <Line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </Svg>
+  );
+}
+
 const SOCIAL_LINKS = [
   {
     name: 'YouTube',
     url: 'https://www.youtube.com/@a6newsinfra',
-    Icon: Youtube,
+    Icon: YoutubeIcon,
   },
   {
     name: 'Twitter',
     url: 'https://x.com/A6NewsTelugu?t=CLS91x4_28ro0cjprwyD9Q&s=08',
-    Icon: Twitter,
+    Icon: TwitterIcon,
   },
   {
     name: 'Facebook',
     url: 'https://www.facebook.com/share/16cLcBDyEh/',
-    Icon: Facebook,
+    Icon: FacebookIcon,
   },
   {
     name: 'Instagram',
     url: 'https://www.instagram.com/a6newsinfra?igsh=MW5zcGRjYWMxcDAwMg==',
-    Icon: Instagram,
+    Icon: InstagramIcon,
   },
 ];
 
