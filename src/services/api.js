@@ -1,5 +1,5 @@
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const rawBackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || 'http://localhost:10000';
 export const BACKEND_URL = rawBackendUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
