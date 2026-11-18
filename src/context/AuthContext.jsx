@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
         AsyncStorage.getItem(ROLE_STORAGE_KEY),
       ]);
 
-      if (!savedToken || isTokenExpired(savedToken)) {
+      if (!savedToken || isTokenExpired(savedToken) || !savedRole) {
         await AsyncStorage.multiRemove([TOKEN_STORAGE_KEY, ROLE_STORAGE_KEY]);
         setToken(null);
         setRole(null);
@@ -36,8 +36,8 @@ export function AuthProvider({ children }) {
       }
 
       setToken(savedToken);
-      setRole(savedRole || null);
-      return { token: savedToken, role: savedRole || null };
+      setRole(savedRole);
+      return { token: savedToken, role: savedRole };
     } catch {
       setToken(null);
       setRole(null);
@@ -48,29 +48,30 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async (newToken, newRole) => {
-    if (!newToken || isTokenExpired(newToken)) {
+    if (!newToken || isTokenExpired(newToken) || newRole !== 'admin') {
       await AsyncStorage.multiRemove([TOKEN_STORAGE_KEY, ROLE_STORAGE_KEY]);
       setToken(null);
       setRole(null);
-      return;
+      return false;
     }
 
-    const pairs = [[TOKEN_STORAGE_KEY, newToken]];
-    if (newRole) {
-      pairs.push([ROLE_STORAGE_KEY, newRole]);
-    } else {
-      await AsyncStorage.removeItem(ROLE_STORAGE_KEY);
-    }
-
-    await AsyncStorage.multiSet(pairs);
+    await AsyncStorage.multiSet([
+      [TOKEN_STORAGE_KEY, newToken],
+      [ROLE_STORAGE_KEY, newRole],
+    ]);
     setToken(newToken);
-    setRole(newRole || null);
+    setRole(newRole);
+    return true;
   }, []);
 
   const logout = useCallback(async () => {
-    await AsyncStorage.multiRemove([TOKEN_STORAGE_KEY, ROLE_STORAGE_KEY]);
-    setToken(null);
-    setRole(null);
+    try {
+      await AsyncStorage.multiRemove([TOKEN_STORAGE_KEY, ROLE_STORAGE_KEY]);
+    } finally {
+      setToken(null);
+      setRole(null);
+      setLoadingAuth(false);
+    }
   }, []);
 
   useEffect(() => {

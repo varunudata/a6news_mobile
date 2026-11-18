@@ -102,7 +102,6 @@ const IMPORTANT_LINKS = [
   { label: 'హోమ్', href: '/' },
   { label: 'ప్రధాన వార్తలు', href: '/category/11' },
   { label: 'వీడియో కథనాలు', href: '/category/25' },
-  { label: 'ఎడిటోరియల్ లాగిన్', href: '/login' },
 ];
 
 export function Footer() {
