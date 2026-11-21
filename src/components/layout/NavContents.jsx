@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
 
@@ -13,41 +13,64 @@ export function NavContents() {
   const pathname = usePathname();
   const scrollRef = useRef(null);
   const itemLayoutsRef = useRef({});
+  const isMountedRef = useRef(true);
+  const loadedRemoteRef = useRef(false);
+  const inFlightRef = useRef(false);
+  const prevPathnameRef = useRef(pathname);
   const [viewportWidth, setViewportWidth] = useState(0);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-
-    const fetchCategories = async () => {
-      try {
-        const response = await api.get('/api/categories');
-        const list = response?.data?.data;
-        if (active) {
-          if (Array.isArray(list) && list.length > 0) {
-            setCategories(list);
-          } else {
-            setCategories(FALLBACK_CATEGORIES);
-          }
-        }
-      } catch {
-        if (active) {
-          setCategories(FALLBACK_CATEGORIES);
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchCategories();
-
+    isMountedRef.current = true;
     return () => {
-      active = false;
+      isMountedRef.current = false;
     };
   }, []);
+
+  const fetchCategories = useCallback(async ({ silent = false } = {}) => {
+    if (inFlightRef.current) {
+      return;
+    }
+
+    inFlightRef.current = true;
+    try {
+      const response = await api.get('/api/categories');
+      const list = response?.data?.data;
+      if (isMountedRef.current) {
+        if (Array.isArray(list) && list.length > 0) {
+          loadedRemoteRef.current = true;
+          setCategories(list);
+        } else if (!silent) {
+          setCategories(FALLBACK_CATEGORIES);
+        }
+      }
+    } catch {
+      if (isMountedRef.current && !silent) {
+        setCategories(FALLBACK_CATEGORIES);
+      }
+    } finally {
+      inFlightRef.current = false;
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  useEffect(() => {
+    if (prevPathnameRef.current === pathname) {
+      return;
+    }
+    prevPathnameRef.current = pathname;
+
+    if (!loadedRemoteRef.current || pathname === '/') {
+      fetchCategories({ silent: loadedRemoteRef.current });
+    }
+  }, [pathname, fetchCategories]);
 
   useEffect(() => {
     if (!pathname || categories.length === 0 || viewportWidth <= 0) return;

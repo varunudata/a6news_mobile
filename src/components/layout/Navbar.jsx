@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import Animated, {
   Easing,
   cancelAnimation,
@@ -54,37 +54,66 @@ function PulsingIndicator() {
 
 export function Navbar() {
   const router = useRouter();
+  const pathname = usePathname?.() || '/';
+  const isMountedRef = useRef(true);
+  const loadedRemoteRef = useRef(false);
+  const inFlightRef = useRef(false);
+  const prevPathnameRef = useRef(pathname);
+
   const [tickerItems, setTickerItems] = useState([]);
   const [loadingTicker, setLoadingTicker] = useState(true);
   const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
-    let active = true;
-
-    const fetchTicker = async () => {
-      try {
-        const response = await api.get('/api/ticker');
-        const text = response?.data?.data?.text || '';
-        if (active) {
-          setTickerItems(parseTickerText(text));
-        }
-      } catch {
-        if (active) {
-          setTickerItems([]);
-        }
-      } finally {
-        if (active) {
-          setLoadingTicker(false);
-        }
-      }
-    };
-
-    fetchTicker();
-
+    isMountedRef.current = true;
     return () => {
-      active = false;
+      isMountedRef.current = false;
     };
   }, []);
+
+  const fetchTicker = useCallback(async ({ silent = false } = {}) => {
+    if (inFlightRef.current) {
+      return;
+    }
+
+    inFlightRef.current = true;
+    if (!silent) {
+      setLoadingTicker(true);
+    }
+
+    try {
+      const response = await api.get('/api/ticker');
+      const text = response?.data?.data?.text || '';
+      if (isMountedRef.current) {
+        loadedRemoteRef.current = true;
+        setTickerItems(parseTickerText(text));
+      }
+    } catch {
+      if (isMountedRef.current && !silent) {
+        setTickerItems([]);
+      }
+    } finally {
+      inFlightRef.current = false;
+      if (isMountedRef.current) {
+        setLoadingTicker(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTicker();
+  }, [fetchTicker]);
+
+  useEffect(() => {
+    if (prevPathnameRef.current === pathname) {
+      return;
+    }
+    prevPathnameRef.current = pathname;
+
+    if (!loadedRemoteRef.current || pathname === '/') {
+      fetchTicker({ silent: loadedRemoteRef.current });
+    }
+  }, [pathname, fetchTicker]);
 
   return (
     <View style={styles.container}>

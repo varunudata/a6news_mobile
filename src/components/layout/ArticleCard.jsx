@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowRight, Calendar, Newspaper, PlayCircle } from 'lucide-react-native';
@@ -29,6 +30,11 @@ export function ArticleCard({
   style,
 }) {
   const router = useRouter();
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [post?.thumbnail]);
 
   const handlePress = () => {
     if (onPress) {
@@ -68,11 +74,12 @@ export function ArticleCard({
 
       {/* Uncropped 16:9 Thumbnail Container */}
       <View style={styles.thumbnailWrapper}>
-        {post?.thumbnail ? (
+        {post?.thumbnail && !imageError ? (
           <Image
             source={{ uri: post.thumbnail }}
             style={styles.thumbnailImage}
             resizeMode="contain"
+            onError={() => setImageError(true)}
           />
         ) : (
           <View style={styles.noImageContainer}>

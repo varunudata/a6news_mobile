@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { ArrowRight, ChevronLeft, ChevronRight, Newspaper } from 'lucide-react-native';
 
 import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/theme';
 import { HERO_SLIDES } from '@/constants/heroSlides';
@@ -13,6 +13,7 @@ export function Hero() {
   const router = useRouter();
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [failedSlides, setFailedSlides] = useState({});
 
   const totalSlides = HERO_SLIDES.length;
   const current = HERO_SLIDES[index] || HERO_SLIDES[0];
@@ -46,12 +47,19 @@ export function Hero() {
       onTouchCancel={() => setIsPaused(false)}>
       {/* 16:9 Image Viewport */}
       <View style={styles.imageViewport}>
-        <Image
-          source={{ uri: current.image }}
-          style={styles.slideImage}
-          resizeMode="cover"
-          accessibilityLabel={current.title}
-        />
+        {failedSlides[index] ? (
+          <View style={styles.slideFallback}>
+            <Newspaper size={36} color={COLORS.gray400} />
+          </View>
+        ) : (
+          <Image
+            source={{ uri: current.image }}
+            style={styles.slideImage}
+            resizeMode="cover"
+            accessibilityLabel={current.title}
+            onError={() => setFailedSlides((prev) => ({ ...prev, [index]: true }))}
+          />
+        )}
 
         {/* Top-Left Slide Counter */}
         <View style={styles.counterPill}>
@@ -151,6 +159,12 @@ const styles = StyleSheet.create({
   slideImage: {
     width: '100%',
     height: '100%',
+  },
+  slideFallback: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   counterPill: {
     position: 'absolute',

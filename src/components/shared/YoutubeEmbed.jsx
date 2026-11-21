@@ -37,17 +37,32 @@ export function YoutubeEmbed({ videoId, youtubeLink }) {
           </Pressable>
         </View>
       ) : (
-        <YoutubePlayer
-          height={playerHeight}
-          width={containerWidth}
-          videoId={videoId}
-          play={false}
-          onError={() => setHasError(true)}
-          webViewProps={{
-            androidLayerType: 'hardware',
-            allowsFullscreenVideo: true,
-          }}
-        />
+        <>
+          <YoutubePlayer
+            height={playerHeight}
+            width={containerWidth}
+            videoId={videoId}
+            play={false}
+            onError={() => setHasError(true)}
+            webViewProps={{
+              androidLayerType: 'hardware',
+              allowsFullscreenVideo: true,
+              allowsInlineMediaPlayback: true,
+              domStorageEnabled: true,
+              javaScriptEnabled: true,
+            }}
+          />
+          <View style={styles.watchBar}>
+            <Pressable
+              onPress={() => Linking.openURL(fallbackUrl).catch(() => {})}
+              accessibilityRole="link"
+              accessibilityLabel="YouTube లో చూడండి"
+              style={({ pressed }) => [styles.watchLink, pressed && styles.pressed]}>
+              <PlayCircle size={13} color={COLORS.brandRed} />
+              <Text style={styles.watchLinkText}>YouTube లో చూడండి</Text>
+            </Pressable>
+          </View>
+        </>
       )}
     </View>
   );
@@ -85,6 +100,25 @@ const styles = StyleSheet.create({
   fallbackButtonText: {
     ...TYPOGRAPHY.scale.xs,
     color: COLORS.white,
+    fontWeight: TYPOGRAPHY.fontWeight.bold,
+  },
+  watchBar: {
+    backgroundColor: COLORS.backgroundSecondary,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.borderCard,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    alignItems: 'flex-end',
+  },
+  watchLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 2,
+  },
+  watchLinkText: {
+    ...TYPOGRAPHY.scale.xs,
+    color: COLORS.brandRed,
     fontWeight: TYPOGRAPHY.fontWeight.bold,
   },
 });

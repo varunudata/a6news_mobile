@@ -20,6 +20,7 @@ import {
   FolderKanban,
   Plus,
   RefreshCw,
+  RotateCcw,
   Save,
   Search,
   Trash2,
@@ -50,6 +51,7 @@ export default function AdminCategoriesScreen() {
   const inFlightRef = useRef(false);
 
   const [categories, setCategories] = useState([]);
+  const [originalCategories, setOriginalCategories] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -95,6 +97,7 @@ export default function AdminCategoriesScreen() {
 
       const list = Array.isArray(response?.data?.data) ? response.data.data : [];
       setCategories(list);
+      setOriginalCategories(list);
       setOrderChanged(false);
     } catch (err) {
       if (!isMountedRef.current) {
@@ -149,6 +152,17 @@ export default function AdminCategoriesScreen() {
     setOrderChanged(true);
     setFeedback('');
     setError('');
+  };
+
+  const handleResetOrder = () => {
+    if (isMutating || !orderChanged) {
+      return;
+    }
+    setCategories(originalCategories);
+    setOrderChanged(false);
+    setError('');
+    setFeedback('Category order changes discarded.');
+    showAndroidToast('Category order reset.');
   };
 
   const handleSaveOrder = async () => {
@@ -341,26 +355,43 @@ export default function AdminCategoriesScreen() {
 
           <View style={styles.headerActions}>
             {orderChanged && !isSearching ? (
-              <Pressable
-                onPress={handleSaveOrder}
-                disabled={isMutating}
-                accessibilityRole="button"
-                accessibilityLabel="Save Order"
-                style={({ pressed }) => [
-                  styles.saveOrderButton,
-                  isMutating && styles.buttonDisabled,
-                  pressed && !isMutating && styles.saveOrderButtonPressed,
-                ]}
-              >
-                {savingOrder ? (
-                  <ActivityIndicator size="small" color={COLORS.white} />
-                ) : (
-                  <Save size={15} color={COLORS.white} />
-                )}
-                <Text style={styles.saveOrderButtonText}>
-                  {savingOrder ? 'Saving...' : 'Save Order'}
-                </Text>
-              </Pressable>
+              <>
+                <Pressable
+                  onPress={handleResetOrder}
+                  disabled={isMutating}
+                  accessibilityRole="button"
+                  accessibilityLabel="Reset Order"
+                  style={({ pressed }) => [
+                    styles.resetOrderButton,
+                    isMutating && styles.buttonDisabled,
+                    pressed && !isMutating && styles.neutralButtonPressed,
+                  ]}
+                >
+                  <RotateCcw size={14} color={COLORS.textSecondary} />
+                  <Text style={styles.resetOrderButtonText}>Reset Order</Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={handleSaveOrder}
+                  disabled={isMutating}
+                  accessibilityRole="button"
+                  accessibilityLabel="Save Order"
+                  style={({ pressed }) => [
+                    styles.saveOrderButton,
+                    isMutating && styles.buttonDisabled,
+                    pressed && !isMutating && styles.saveOrderButtonPressed,
+                  ]}
+                >
+                  {savingOrder ? (
+                    <ActivityIndicator size="small" color={COLORS.white} />
+                  ) : (
+                    <Save size={15} color={COLORS.white} />
+                  )}
+                  <Text style={styles.saveOrderButtonText}>
+                    {savingOrder ? 'Saving...' : 'Save Order'}
+                  </Text>
+                </Pressable>
+              </>
             ) : null}
 
             <Pressable
@@ -742,6 +773,24 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.scale.sm,
     fontWeight: TYPOGRAPHY.fontWeight.bold,
     color: COLORS.white,
+  },
+  resetOrderButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    backgroundColor: COLORS.white,
+    borderWidth: LAYOUT.borderWidth,
+    borderColor: COLORS.borderInput,
+    borderRadius: BORDER_RADIUS.lg,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
+  },
+  resetOrderButtonText: {
+    ...TYPOGRAPHY.scale.sm,
+    fontWeight: TYPOGRAPHY.fontWeight.semibold,
+    color: COLORS.textSecondary,
   },
   successBanner: {
     flexDirection: 'row',

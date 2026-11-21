@@ -8,6 +8,7 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { Loader } from '@/components/shared/Loader';
 import { COLORS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { setUnauthorizedHandler } from '@/services/api';
 import { isTokenExpired } from '@/utils/auth';
 
 /**
@@ -28,6 +29,19 @@ export default function AdminLayout() {
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    setUnauthorizedHandler(async () => {
+      await logout();
+      if (isOnAdminRoute) {
+        router.replace('/login');
+      }
+    });
+
+    return () => {
+      setUnauthorizedHandler(null);
+    };
+  }, [isOnAdminRoute, logout, router]);
 
   useEffect(() => {
     if (loadingAuth || !isOnAdminRoute) {
@@ -60,7 +74,7 @@ export default function AdminLayout() {
     return () => {
       cancelled = true;
     };
-  }, [loadingAuth, isOnAdminRoute, hasValidToken, token, role, logout, router]);
+  }, [loadingAuth, isOnAdminRoute, pathname, hasValidToken, token, role, logout, router]);
 
   if (loadingAuth || !isAuthorized) {
     return (

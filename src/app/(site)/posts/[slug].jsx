@@ -1,5 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Modal,
+  Platform,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import {
@@ -37,10 +48,13 @@ export default function SinglePostScreen() {
   const [post, setPost] = useState(null);
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
   const [lightboxImg, setLightboxImg] = useState(null);
+  const [mainImageFailed, setMainImageFailed] = useState(false);
+  const [failedGalleryImages, setFailedGalleryImages] = useState({});
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -52,9 +66,10 @@ export default function SinglePostScreen() {
     };
   }, []);
 
-  const fetchPostData = useCallback(async (targetSlug) => {
+  const fetchPostData = useCallback(async (targetSlug, { isRefresh = false } = {}) => {
     if (!targetSlug) {
       setLoading(false);
+      setRefreshing(false);
       setNotFound(true);
       setPost(null);
       setRelatedPosts([]);
@@ -62,13 +77,19 @@ export default function SinglePostScreen() {
     }
 
     const requestId = ++requestIdRef.current;
-    setLoading(true);
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+      setPost(null);
+      setRelatedPosts([]);
+    }
     setNotFound(false);
     setError(null);
-    setPost(null);
-    setRelatedPosts([]);
     setLightboxImg(null);
     setCopied(false);
+    setMainImageFailed(false);
+    setFailedGalleryImages({});
 
     try {
       const response = await api.get(`/api/posts/${encodeURIComponent(targetSlug)}`);
@@ -128,6 +149,7 @@ export default function SinglePostScreen() {
     } finally {
       if (isMountedRef.current && requestId === requestIdRef.current) {
         setLoading(false);
+        setRefreshing(false);
       }
     }
   }, []);
@@ -146,6 +168,9 @@ export default function SinglePostScreen() {
       if (!isMountedRef.current) return;
 
       setCopied(true);
+      if (Platform.OS === 'android' && typeof ToastAndroid?.show === 'function') {
+        ToastAndroid.show('లింక్ కాపీ అయింది', ToastAndroid.SHORT);
+      }
       if (copyTimerRef.current) {
         clearTimeout(copyTimerRef.current);
       }
@@ -183,7 +208,16 @@ export default function SinglePostScreen() {
         ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          RefreshControl ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => fetchPostData(rawSlug, { isRefresh: true })}
+              colors={[COLORS.brandRed]}
+            />
+          ) : undefined
+        }>
         <View style={styles.main}>
           {loading ? (
             <View style={styles.loaderWrap}>
@@ -317,12 +351,20 @@ export default function SinglePostScreen() {
               {/* 5. Main Thumbnail */}
               {thumbnailUrl ? (
                 <View style={styles.thumbnailCard}>
-                  <Image
-                    source={{ uri: thumbnailUrl }}
-                    style={styles.thumbnailImage}
-                    resizeMode="contain"
-                    accessibilityLabel={post.title}
-                  />
+                  {mainImageFailed ? (
+                    <View style={styles.imageFallback}>
+                      <Newspaper size={28} color={COLORS.gray400} />
+                      <Text style={styles.imageFallbackText}>No Image Available</Text>
+                    </View>
+                  ) : (
+                    <Image
+                      source={{ uri: thumbnailUrl }}
+                      style={styles.thumbnailImage}
+                      resizeMode="contain"
+                      accessibilityLabel={post.title}
+                      onError={() => setMainImageFailed(true)}
+                    />
+                  )}
                 </View>
               ) : null}
 
@@ -337,23 +379,40 @@ export default function SinglePostScreen() {
 
                         {inlineImgs.length > 0 ? (
                           <View style={styles.inlineGalleryGroup}>
-                            {inlineImgs.map((imgObj) => (
-                              <Pressable
-                                key={`inline-img-${imgObj.index}`}
-                                onPress={() => setLightboxImg(imgObj.url)}
-                                accessibilityRole="button"
-                                accessibilityLabel={`Gallery image ${imgObj.index + 1}`}
-                                style={({ pressed }) => [
-                                  styles.inlineImageCard,
-                                  pressed && styles.pressedOpacity,
-                                ]}>
-                                <Image
-                                  source={{ uri: imgObj.url }}
-                                  style={styles.inlineImage}
-                                  resizeMode="contain"
-                                />
-                              </Pressable>
-                            ))}
+                            {inlineImgs.map((imgObj) => {
+                              const isImgFailed = Boolean(failedGalleryImages[imgObj.url]);
+                              return (
+                                <Pressable
+                                  key={`inline-img-${imgObj.index}`}
+                                  disabled={isImgFailed}
+                                  onPress={() => !isImgFailed && setLightboxImg(imgObj.url)}
+                                  accessibilityRole="button"
+                                  accessibilityLabel={`Gallery image ${imgObj.index + 1}`}
+                                  style={({ pressed }) => [
+                                    styles.inlineImageCard,
+                                    !isImgFailed && pressed && styles.pressedOpacity,
+                                  ]}>
+                                  {isImgFailed ? (
+                                    <View style={styles.inlineImageFallback}>
+                                      <Newspaper size={24} color={COLORS.gray400} />
+                                      <Text style={styles.imageFallbackText}>No Image Available</Text>
+                                    </View>
+                                  ) : (
+                                    <Image
+                                      source={{ uri: imgObj.url }}
+                                      style={styles.inlineImage}
+                                      resizeMode="contain"
+                                      onError={() =>
+                                        setFailedGalleryImages((prev) => ({
+                                          ...prev,
+                                          [imgObj.url]: true,
+                                        }))
+                                      }
+                                    />
+                                  )}
+                                </Pressable>
+                              );
+                            })}
                           </View>
                         ) : null}
                       </View>
@@ -361,23 +420,37 @@ export default function SinglePostScreen() {
                   })
                 ) : galleryImages.length > 0 ? (
                   <View style={styles.inlineGalleryGroup}>
-                    {galleryImages.map((imgUrl, idx) => (
-                      <Pressable
-                        key={`fallback-img-${idx}`}
-                        onPress={() => setLightboxImg(imgUrl)}
-                        accessibilityRole="button"
-                        accessibilityLabel={`Gallery image ${idx + 1}`}
-                        style={({ pressed }) => [
-                          styles.inlineImageCard,
-                          pressed && styles.pressedOpacity,
-                        ]}>
-                        <Image
-                          source={{ uri: imgUrl }}
-                          style={styles.inlineImage}
-                          resizeMode="contain"
-                        />
-                      </Pressable>
-                    ))}
+                    {galleryImages.map((imgUrl, idx) => {
+                      const isImgFailed = Boolean(failedGalleryImages[imgUrl]);
+                      return (
+                        <Pressable
+                          key={`fallback-img-${idx}`}
+                          disabled={isImgFailed}
+                          onPress={() => !isImgFailed && setLightboxImg(imgUrl)}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Gallery image ${idx + 1}`}
+                          style={({ pressed }) => [
+                            styles.inlineImageCard,
+                            !isImgFailed && pressed && styles.pressedOpacity,
+                          ]}>
+                          {isImgFailed ? (
+                            <View style={styles.inlineImageFallback}>
+                              <Newspaper size={24} color={COLORS.gray400} />
+                              <Text style={styles.imageFallbackText}>No Image Available</Text>
+                            </View>
+                          ) : (
+                            <Image
+                              source={{ uri: imgUrl }}
+                              style={styles.inlineImage}
+                              resizeMode="contain"
+                              onError={() =>
+                                setFailedGalleryImages((prev) => ({ ...prev, [imgUrl]: true }))
+                              }
+                            />
+                          )}
+                        </Pressable>
+                      );
+                    })}
                   </View>
                 ) : null}
               </View>
@@ -481,6 +554,7 @@ export default function SinglePostScreen() {
                 source={{ uri: lightboxImg }}
                 style={styles.lightboxImage}
                 resizeMode="contain"
+                onError={() => setLightboxImg(null)}
               />
             ) : null}
           </View>
@@ -692,6 +766,19 @@ const styles = StyleSheet.create({
     height: 240,
     backgroundColor: COLORS.thumbnailBackdrop,
   },
+  imageFallback: {
+    width: '100%',
+    height: 200,
+    backgroundColor: COLORS.thumbnailBackdrop,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.xs,
+  },
+  imageFallbackText: {
+    ...TYPOGRAPHY.scale.xs,
+    color: COLORS.textPlaceholder,
+    fontWeight: TYPOGRAPHY.fontWeight.medium,
+  },
   articleBody: {
     gap: SPACING.lg,
   },
@@ -718,6 +805,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 220,
     backgroundColor: COLORS.inlinePhotoBackdrop,
+  },
+  inlineImageFallback: {
+    width: '100%',
+    height: 180,
+    backgroundColor: COLORS.inlinePhotoBackdrop,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.xs,
   },
   youtubeSection: {
     marginTop: SPACING.xxl,

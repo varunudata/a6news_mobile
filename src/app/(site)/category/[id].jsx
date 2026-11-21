@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ChevronLeft,
@@ -39,6 +39,7 @@ export default function CategoryScreen() {
     totalPosts: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
   const activePage = query.id === rawId ? query.page : 1;
@@ -51,51 +52,62 @@ export default function CategoryScreen() {
     };
   }, []);
 
-  const fetchCategoryPosts = useCallback(async (categoryId, targetPage, targetSort) => {
-    if (!categoryId) {
-      setLoading(false);
-      setError('Invalid category ID');
-      return;
-    }
-
-    const requestId = ++requestIdRef.current;
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await api.get(
-        `/api/categories/${categoryId}?page=${targetPage}&sort=${targetSort}`
-      );
-      if (!isMountedRef.current || requestId !== requestIdRef.current) return;
-
-      const payload = response?.data?.data || {};
-      const nextCategory = payload.category || null;
-      const nextPosts = Array.isArray(payload.posts) ? payload.posts : [];
-      const nextPagination = payload.pagination || {};
-
-      setCategory(nextCategory);
-      setPosts(nextPosts);
-      setPagination({
-        currentPage: Number(nextPagination.currentPage) || targetPage,
-        totalPages: Math.max(1, Number(nextPagination.totalPages) || 1),
-        totalPosts: Number(nextPagination.totalPosts) || 0,
-      });
-    } catch (err) {
-      if (!isMountedRef.current || requestId !== requestIdRef.current) return;
-      setCategory(null);
-      setPosts([]);
-      setPagination({ currentPage: 1, totalPages: 1, totalPosts: 0 });
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          'విభాగం వార్తలు లోడ్ చేయడంలో లోపం ఏర్పడింది.'
-      );
-    } finally {
-      if (isMountedRef.current && requestId === requestIdRef.current) {
+  const fetchCategoryPosts = useCallback(
+    async (categoryId, targetPage, targetSort, { isRefresh = false } = {}) => {
+      if (!categoryId) {
         setLoading(false);
+        setRefreshing(false);
+        setError('Invalid category ID');
+        return;
       }
-    }
-  }, []);
+
+      const requestId = ++requestIdRef.current;
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      setError(null);
+
+      try {
+        const response = await api.get(
+          `/api/categories/${categoryId}?page=${targetPage}&sort=${targetSort}`
+        );
+        if (!isMountedRef.current || requestId !== requestIdRef.current) return;
+
+        const payload = response?.data?.data || {};
+        const nextCategory = payload.category || null;
+        const nextPosts = Array.isArray(payload.posts) ? payload.posts : [];
+        const nextPagination = payload.pagination || {};
+
+        setCategory(nextCategory);
+        setPosts(nextPosts);
+        setPagination({
+          currentPage: Number(nextPagination.currentPage) || targetPage,
+          totalPages: Math.max(1, Number(nextPagination.totalPages) || 1),
+          totalPosts: Number(nextPagination.totalPosts) || 0,
+        });
+      } catch (err) {
+        if (!isMountedRef.current || requestId !== requestIdRef.current) return;
+        if (!isRefresh) {
+          setCategory(null);
+          setPosts([]);
+          setPagination({ currentPage: 1, totalPages: 1, totalPosts: 0 });
+        }
+        setError(
+          err?.response?.data?.message ||
+            err?.message ||
+            'విభాగం వార్తలు లోడ్ చేయడంలో లోపం ఏర్పడింది.'
+        );
+      } finally {
+        if (isMountedRef.current && requestId === requestIdRef.current) {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     if (query.id !== rawId) {
@@ -124,7 +136,16 @@ export default function CategoryScreen() {
       ref={scrollRef}
       style={styles.scroll}
       contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}>
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        RefreshControl ? (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => fetchCategoryPosts(rawId, activePage, activeSort, { isRefresh: true })}
+            colors={[COLORS.brandRed]}
+          />
+        ) : undefined
+      }>
       <View style={styles.main}>
         {/* Breadcrumb */}
         <View style={styles.breadcrumbRow}>

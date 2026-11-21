@@ -7,11 +7,15 @@ import api from '@/services/api';
 import { ArticleCard } from '@/components/layout/ArticleCard';
 import { Loader } from '@/components/shared/Loader';
 
-export function Posts({ scrollRef }) {
+export function Posts({ scrollRef, refreshSignal = 0, onRefreshDone }) {
   const postsContainerYRef = useRef(0);
   const latestSectionYRef = useRef(0);
   const isMountedRef = useRef(true);
   const recentRequestIdRef = useRef(0);
+  const pageRef = useRef(1);
+  const lastHandledRefreshRef = useRef(0);
+  const onRefreshDoneRef = useRef(onRefreshDone);
+  onRefreshDoneRef.current = onRefreshDone;
 
   // Section 1: Top 6 Stories by Category
   const [topPosts, setTopPosts] = useState([]);
@@ -24,6 +28,7 @@ export function Posts({ scrollRef }) {
   const [errorRecent, setErrorRecent] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  pageRef.current = page;
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -89,6 +94,22 @@ export function Posts({ scrollRef }) {
   useEffect(() => {
     fetchRecentPosts(page);
   }, [fetchRecentPosts, page]);
+
+  useEffect(() => {
+    if (!refreshSignal || refreshSignal === lastHandledRefreshRef.current) {
+      return;
+    }
+    lastHandledRefreshRef.current = refreshSignal;
+    let active = true;
+    Promise.all([fetchTopPosts(), fetchRecentPosts(pageRef.current)]).finally(() => {
+      if (active && isMountedRef.current) {
+        onRefreshDoneRef.current?.();
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [refreshSignal, fetchTopPosts, fetchRecentPosts]);
 
   const handlePageChange = (nextPage) => {
     if (loadingRecent) return;

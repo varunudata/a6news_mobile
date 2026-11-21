@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import {
   ArrowRight,
   Calendar,
@@ -61,6 +61,7 @@ export default function AdminDashboardScreen() {
   const router = useRouter();
   const isMountedRef = useRef(true);
   const inFlightRef = useRef(false);
+  const hasLoadedOnceRef = useRef(false);
 
   const [stats, setStats] = useState({
     totalPosts: 0,
@@ -123,6 +124,7 @@ export default function AdminDashboardScreen() {
         tickerItemsCount,
       });
       setBrokenImages({});
+      hasLoadedOnceRef.current = true;
     } catch (err) {
       if (!isMountedRef.current) {
         return;
@@ -145,6 +147,14 @@ export default function AdminDashboardScreen() {
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (hasLoadedOnceRef.current) {
+        fetchDashboardData({ isRefresh: true });
+      }
+    }, [fetchDashboardData])
+  );
 
   const markImageBroken = (key) => {
     setBrokenImages((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
