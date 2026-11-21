@@ -31,10 +31,6 @@ import { Loader } from '@/components/shared/Loader';
 import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/theme';
 import api from '@/services/api';
 
-const ACCENT_BLUE = '#1D4ED8';
-const ACCENT_BLUE_BG = '#EFF6FF';
-const ACCENT_BLUE_BORDER = '#BFDBFE';
-
 function showAndroidToast(message) {
   if (Platform.OS === 'android' && typeof ToastAndroid?.show === 'function') {
     ToastAndroid.show(message, ToastAndroid.SHORT);
@@ -337,6 +333,7 @@ export default function AdminCategoriesScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -734,10 +731,13 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: SPACING.sm,
   },
   addButton: {
     flex: 1,
+    minWidth: 130,
+    minHeight: 42,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -757,11 +757,13 @@ const styles = StyleSheet.create({
   },
   saveOrderButton: {
     flex: 1,
+    minWidth: 110,
+    minHeight: 42,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: ACCENT_BLUE,
+    backgroundColor: COLORS.accentBlue,
     borderRadius: BORDER_RADIUS.lg,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.md,
@@ -776,6 +778,8 @@ const styles = StyleSheet.create({
   },
   resetOrderButton: {
     flex: 1,
+    minWidth: 100,
+    minHeight: 42,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -796,9 +800,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: COLORS.successBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: '#BBF7D0',
+    borderColor: COLORS.successBorder,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
   },
@@ -862,16 +866,16 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   tipBanner: {
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
   },
   tipText: {
     ...TYPOGRAPHY.scale.xs,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
     fontWeight: TYPOGRAPHY.fontWeight.medium,
   },
   emptyCard: {
@@ -943,8 +947,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   iconButton: {
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
@@ -953,8 +957,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   deleteIconButton: {
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.red200,
@@ -975,9 +979,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.modalBackdrop,
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: SPACING.xl,
   },
   modalCard: {
+    width: '100%',
+    maxWidth: 420,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderCard,

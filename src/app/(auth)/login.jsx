@@ -119,6 +119,7 @@ export default function AdminLoginScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.wrapper}>
@@ -297,21 +298,21 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderCard,
-    padding: SPACING.xxl,
-    gap: SPACING.xl,
+    padding: SPACING.xl,
+    gap: SPACING.lg,
     shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
   brandSection: {
     alignItems: 'center',
     gap: SPACING.sm,
   },
   logo: {
-    width: 140,
-    height: 44,
+    width: 148,
+    height: 48,
     marginBottom: SPACING.xs,
   },
   logoFallback: {

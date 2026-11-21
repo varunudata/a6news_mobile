@@ -459,6 +459,8 @@ const styles = StyleSheet.create({
   primaryButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 40,
     backgroundColor: COLORS.brandRed,
     borderRadius: BORDER_RADIUS.lg,
     paddingHorizontal: SPACING.lg,
@@ -478,6 +480,8 @@ const styles = StyleSheet.create({
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
     borderRadius: BORDER_RADIUS.lg,
+    minHeight: 40,
+    justifyContent: 'center',
     paddingHorizontal: SPACING.lg,
     paddingVertical: 10,
   },
@@ -490,10 +494,10 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   cardList: {
-    gap: SPACING.xxl,
+    gap: SPACING.lg,
   },
   paginationBar: {
-    marginTop: SPACING.xxl,
+    marginTop: SPACING.xl,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderCard,
@@ -511,6 +515,7 @@ const styles = StyleSheet.create({
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
     borderRadius: BORDER_RADIUS.lg,
+    minHeight: 40,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     gap: SPACING.xs,

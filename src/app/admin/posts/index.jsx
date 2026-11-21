@@ -32,9 +32,6 @@ import api from '@/services/api';
 import { formatSlashDate } from '@/utils/formatDate';
 
 const PAGE_LIMIT = 6;
-const ACCENT_BLUE = '#1D4ED8';
-const ACCENT_BLUE_BG = '#EFF6FF';
-const ACCENT_BLUE_BORDER = '#BFDBFE';
 
 function resolveCategoryName(post) {
   if (post?.category && typeof post.category === 'object' && post.category.name) {
@@ -375,7 +372,7 @@ export default function AdminAllPostsScreen() {
                           pressed && canEdit && styles.accentButtonPressed,
                         ]}
                       >
-                        <Pencil size={14} color={ACCENT_BLUE} />
+                        <Pencil size={14} color={COLORS.accentBlue} />
                         <Text style={styles.editButtonText}>Edit</Text>
                       </Pressable>
 
@@ -581,9 +578,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: COLORS.successBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: '#BBF7D0',
+    borderColor: COLORS.successBorder,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
   },
@@ -733,6 +730,7 @@ const styles = StyleSheet.create({
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
     borderRadius: BORDER_RADIUS.lg,
+    minHeight: 40,
     paddingVertical: SPACING.sm,
   },
   viewButtonText: {
@@ -745,23 +743,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 40,
     gap: 5,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
     paddingVertical: SPACING.sm,
   },
   editButtonText: {
     ...TYPOGRAPHY.scale.xs,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   deleteButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 40,
     gap: 5,
     backgroundColor: COLORS.red50,
     borderWidth: LAYOUT.borderWidth,
@@ -823,9 +823,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.modalBackdrop,
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: SPACING.xl,
   },
   modalCard: {
+    width: '100%',
+    maxWidth: 420,
     backgroundColor: COLORS.white,
     borderRadius: BORDER_RADIUS.xl,
     borderWidth: LAYOUT.borderWidth,

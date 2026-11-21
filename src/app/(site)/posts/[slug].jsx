@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
 import {
   ArrowRight,
@@ -535,7 +536,7 @@ export default function SinglePostScreen() {
         transparent
         animationType="fade"
         onRequestClose={() => setLightboxImg(null)}>
-        <View style={styles.lightboxOverlay}>
+        <SafeAreaView style={styles.lightboxOverlay} edges={['top', 'bottom']}>
           <View style={styles.lightboxHeader}>
             <Text style={styles.lightboxTitle}>Image Preview</Text>
             <Pressable
@@ -558,7 +559,7 @@ export default function SinglePostScreen() {
               />
             ) : null}
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );
@@ -711,6 +712,8 @@ const styles = StyleSheet.create({
   shareButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 38,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
@@ -721,7 +724,7 @@ const styles = StyleSheet.create({
   },
   shareButtonCopied: {
     borderColor: COLORS.green600,
-    backgroundColor: COLORS.gray50,
+    backgroundColor: COLORS.successBg,
   },
   shareText: {
     ...TYPOGRAPHY.scale.xs,
@@ -735,7 +738,6 @@ const styles = StyleSheet.create({
   },
   articleTitle: {
     ...TYPOGRAPHY.scale.xxl,
-    lineHeight: 32,
     fontWeight: TYPOGRAPHY.fontWeight.extrabold,
     color: COLORS.gray900,
     marginBottom: SPACING.lg,
@@ -750,6 +752,7 @@ const styles = StyleSheet.create({
   },
   subtitleText: {
     ...TYPOGRAPHY.scale.base,
+    lineHeight: 26,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
     color: COLORS.textSecondary,
   },
@@ -924,7 +927,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   relatedList: {
-    gap: SPACING.xxl,
+    gap: SPACING.lg,
   },
   lightboxOverlay: {
     flex: 1,
@@ -947,7 +950,10 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   lightboxCloseBtn: {
-    padding: SPACING.xs,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: BORDER_RADIUS.sm,
     backgroundColor: COLORS.gray100,
   },

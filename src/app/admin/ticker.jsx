@@ -28,10 +28,6 @@ import { TickerMarquee, parseTickerText } from '@/components/shared/TickerMarque
 import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/theme';
 import api from '@/services/api';
 
-const ACCENT_BLUE = '#1D4ED8';
-const ACCENT_BLUE_BG = '#EFF6FF';
-const ACCENT_BLUE_BORDER = '#BFDBFE';
-
 function showAndroidToast(message) {
   if (Platform.OS === 'android' && typeof ToastAndroid?.show === 'function') {
     ToastAndroid.show(message, ToastAndroid.SHORT);
@@ -254,6 +250,7 @@ export default function AdminTickerScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -340,7 +337,7 @@ export default function AdminTickerScreen() {
                 pressed && !saving && styles.addHeadlinePressed,
               ]}
             >
-              <Plus size={16} color={ACCENT_BLUE} />
+              <Plus size={16} color={COLORS.accentBlue} />
               <Text style={styles.addHeadlineText}>Add</Text>
             </Pressable>
           </View>
@@ -526,9 +523,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: COLORS.successBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: '#BBF7D0',
+    borderColor: COLORS.successBorder,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
   },
@@ -634,10 +631,11 @@ const styles = StyleSheet.create({
   addHeadlineButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: 42,
     gap: 4,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
     paddingHorizontal: SPACING.md,
     paddingVertical: 11,
@@ -648,7 +646,7 @@ const styles = StyleSheet.create({
   addHeadlineText: {
     ...TYPOGRAPHY.scale.sm,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   emptyHeadlinesBox: {
     backgroundColor: COLORS.gray50,
@@ -708,8 +706,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   iconButton: {
-    width: 28,
-    height: 28,
+    width: 34,
+    height: 34,
     borderRadius: BORDER_RADIUS.sm,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
@@ -718,8 +716,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   deleteButton: {
-    width: 28,
-    height: 28,
+    width: 34,
+    height: 34,
     borderRadius: BORDER_RADIUS.sm,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.red200,

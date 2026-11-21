@@ -28,10 +28,6 @@ import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/
 import api from '@/services/api';
 import { formatSlashDate } from '@/utils/formatDate';
 
-const ACCENT_BLUE = '#1D4ED8';
-const ACCENT_BLUE_BG = '#EFF6FF';
-const ACCENT_BLUE_BORDER = '#BFDBFE';
-
 function resolveCategoryName(post) {
   if (post?.category && typeof post.category === 'object' && post.category.name) {
     return String(post.category.name).trim();
@@ -258,7 +254,7 @@ export default function AdminDashboardScreen() {
               pressed && styles.secondaryButtonPressed,
             ]}
           >
-            <Megaphone size={15} color={ACCENT_BLUE} />
+            <Megaphone size={15} color={COLORS.accentBlue} />
             <Text style={styles.secondaryButtonText}>Update Ticker</Text>
           </Pressable>
         </View>
@@ -300,7 +296,7 @@ export default function AdminDashboardScreen() {
 
                 <View style={styles.managePill}>
                   <Text style={styles.manageText}>Manage</Text>
-                  <ArrowRight size={13} color={ACCENT_BLUE} />
+                  <ArrowRight size={13} color={COLORS.accentBlue} />
                 </View>
               </View>
 
@@ -326,7 +322,7 @@ export default function AdminDashboardScreen() {
             style={({ pressed }) => [styles.viewAllButton, pressed && styles.secondaryButtonPressed]}
           >
             <Text style={styles.viewAllText}>View All ({stats.totalPosts})</Text>
-            <ArrowRight size={14} color={ACCENT_BLUE} />
+            <ArrowRight size={14} color={COLORS.accentBlue} />
           </Pressable>
         </View>
 
@@ -414,7 +410,7 @@ export default function AdminDashboardScreen() {
                           pressed && canEdit && styles.editButtonPressed,
                         ]}
                       >
-                        <Pencil size={14} color={ACCENT_BLUE} />
+                        <Pencil size={14} color={COLORS.accentBlue} />
                         <Text style={styles.editButtonText}>Edit</Text>
                       </Pressable>
                     </View>
@@ -616,14 +612,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.full,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
   },
   manageText: {
     ...TYPOGRAPHY.scale.xs,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   statValue: {
     ...TYPOGRAPHY.scale.statValue,
@@ -660,10 +656,11 @@ const styles = StyleSheet.create({
   viewAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: 36,
     gap: 4,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
     paddingHorizontal: SPACING.md,
     paddingVertical: 7,
@@ -671,7 +668,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     ...TYPOGRAPHY.scale.xs,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   emptyCard: {
     backgroundColor: COLORS.white,
@@ -771,6 +768,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 42,
     gap: 6,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
@@ -788,10 +786,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 42,
     gap: 6,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
     paddingVertical: SPACING.sm,
   },
@@ -801,7 +800,7 @@ const styles = StyleSheet.create({
   editButtonText: {
     ...TYPOGRAPHY.scale.sm,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   actionDisabled: {
     opacity: 0.5,

@@ -69,6 +69,13 @@ export const COLORS = {
   success: '#16A34A',
   green700: '#15803D',
   successText: '#15803D',
+  successBg: '#F0FDF4',
+  successBorder: '#BBF7D0',
+
+  // Semantic Editorial Accent (Admin Quick Actions & Info Banners)
+  accentBlue: '#1D4ED8',
+  accentBlueBg: '#EFF6FF',
+  accentBlueBorder: '#BFDBFE',
 
   // Overlays & Alpha Neutrals
   modalBackdrop: 'rgba(0, 0, 0, 0.5)',
@@ -95,12 +102,12 @@ export const TYPOGRAPHY = {
     sm: { fontSize: 14, lineHeight: 20 },
     smRelaxed: { fontSize: 14, lineHeight: 22.75 },
     base: { fontSize: 16, lineHeight: 24 },
-    baseSnug: { fontSize: 16, lineHeight: 22 },
+    baseSnug: { fontSize: 16, lineHeight: 24 },
     articleBodyMobile: { fontSize: 16, lineHeight: 30.4 },
     articleBodyDesktop: { fontSize: 17, lineHeight: 32.3 },
-    lg: { fontSize: 18, lineHeight: 25 },
+    lg: { fontSize: 18, lineHeight: 27 },
     xl: { fontSize: 20, lineHeight: 28 },
-    xxl: { fontSize: 24, lineHeight: 30 },
+    xxl: { fontSize: 24, lineHeight: 34 },
     statValue: { fontSize: 30, lineHeight: 36 },
   },
 };

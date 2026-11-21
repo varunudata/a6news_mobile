@@ -192,9 +192,9 @@ const styles = StyleSheet.create({
   arrowBtn: {
     position: 'absolute',
     top: '50%',
-    marginTop: -18,
-    width: 36,
-    height: 36,
+    marginTop: -20,
+    width: 40,
+    height: 40,
     borderRadius: BORDER_RADIUS.full,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...TYPOGRAPHY.scale.xs,
-    lineHeight: 19,
+    lineHeight: 20,
     color: COLORS.textMuted,
   },
   controlsRow: {
@@ -279,6 +279,8 @@ const styles = StyleSheet.create({
   ctaButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 40,
     backgroundColor: COLORS.brandRed,
     borderRadius: BORDER_RADIUS.lg,
     paddingHorizontal: 14,

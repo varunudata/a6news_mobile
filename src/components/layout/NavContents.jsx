@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
   categoryTab: {
     height: '100%',
     justifyContent: 'center',
+    paddingHorizontal: 2,
     borderBottomWidth: 3,
     borderBottomColor: 'transparent',
   },

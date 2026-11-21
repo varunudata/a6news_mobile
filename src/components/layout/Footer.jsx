@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import { Mail, MapPin } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import Svg, { Line, Path, Rect } from 'react-native-svg';
 
 import { FALLBACK_CATEGORIES } from '@/constants/fallbackCategories';
@@ -106,6 +107,7 @@ const IMPORTANT_LINKS = [
 
 export function Footer() {
   const router = useRouter();
+  const insets = useContext(SafeAreaInsetsContext) || { bottom: 0 };
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
   useEffect(() => {
@@ -135,7 +137,7 @@ export function Footer() {
   };
 
   return (
-    <View style={styles.footer}>
+    <View style={[styles.footer, { paddingBottom: SPACING.xxl + (insets?.bottom || 0) }]}>
       <View style={styles.sections}>
         {/* Column 1: Brand & Socials */}
         <View style={styles.section}>
@@ -293,8 +295,8 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
   },
   socialButton: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: BORDER_RADIUS.full,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.whiteAlpha30,

@@ -6,10 +6,6 @@ import { Upload, X } from 'lucide-react-native';
 import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/theme';
 import { uploadToCloudinary } from '@/utils/uploadToCloudinary';
 
-const ACCENT_BLUE = '#1D4ED8';
-const ACCENT_BLUE_BG = '#EFF6FF';
-const ACCENT_BLUE_BORDER = '#BFDBFE';
-
 /**
  * Reusable single-image upload field with 16:9 uncropped preview and Cloudinary integration.
  */
@@ -101,9 +97,9 @@ export function ImageUploadField({
             ]}
           >
             {uploading ? (
-              <ActivityIndicator size="small" color={ACCENT_BLUE} />
+              <ActivityIndicator size="small" color={COLORS.accentBlue} />
             ) : (
-              <Upload size={15} color={ACCENT_BLUE} />
+              <Upload size={15} color={COLORS.accentBlue} />
             )}
             <Text style={styles.replaceButtonText}>
               {uploading ? 'Uploading...' : 'Replace Thumbnail'}
@@ -123,10 +119,10 @@ export function ImageUploadField({
           ]}
         >
           {uploading ? (
-            <ActivityIndicator size="small" color={ACCENT_BLUE} />
+            <ActivityIndicator size="small" color={COLORS.accentBlue} />
           ) : (
             <View style={styles.uploadIconCircle}>
-              <Upload size={20} color={ACCENT_BLUE} />
+              <Upload size={20} color={COLORS.accentBlue} />
             </View>
           )}
           <Text style={styles.uploadTitle}>
@@ -192,10 +188,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: SPACING.xs,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
+    minHeight: 42,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
   },
@@ -205,7 +202,7 @@ const styles = StyleSheet.create({
   replaceButtonText: {
     ...TYPOGRAPHY.scale.sm,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   uploadBox: {
     borderWidth: LAYOUT.borderWidth,
@@ -220,16 +217,16 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
   },
   uploadBoxPressed: {
-    backgroundColor: ACCENT_BLUE_BG,
-    borderColor: ACCENT_BLUE_BORDER,
+    backgroundColor: COLORS.accentBlueBg,
+    borderColor: COLORS.accentBlueBorder,
   },
   uploadIconCircle: {
     width: 40,
     height: 40,
     borderRadius: BORDER_RADIUS.full,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 2,

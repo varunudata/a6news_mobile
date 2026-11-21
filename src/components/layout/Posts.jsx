@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   cardList: {
-    gap: SPACING.xxl,
+    gap: SPACING.lg,
   },
   stateCard: {
     backgroundColor: COLORS.white,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   paginationBar: {
-    marginTop: SPACING.xxl,
+    marginTop: SPACING.xl,
     backgroundColor: COLORS.white,
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderCard,
@@ -398,6 +398,7 @@ const styles = StyleSheet.create({
     borderWidth: LAYOUT.borderWidth,
     borderColor: COLORS.borderInput,
     borderRadius: BORDER_RADIUS.lg,
+    minHeight: 40,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     gap: SPACING.xs,

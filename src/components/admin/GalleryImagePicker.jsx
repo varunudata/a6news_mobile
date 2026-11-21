@@ -6,10 +6,6 @@ import { Upload, X } from 'lucide-react-native';
 import { BORDER_RADIUS, COLORS, LAYOUT, SPACING, TYPOGRAPHY } from '@/constants/theme';
 import { uploadToCloudinary } from '@/utils/uploadToCloudinary';
 
-const ACCENT_BLUE = '#1D4ED8';
-const ACCENT_BLUE_BG = '#EFF6FF';
-const ACCENT_BLUE_BORDER = '#BFDBFE';
-
 /**
  * Multi-image Cloudinary uploader and 2-column 16:10 gallery preview grid.
  */
@@ -130,9 +126,9 @@ export function GalleryImagePicker({
         ]}
       >
         {uploading ? (
-          <ActivityIndicator size="small" color={ACCENT_BLUE} />
+          <ActivityIndicator size="small" color={COLORS.accentBlue} />
         ) : (
-          <Upload size={15} color={ACCENT_BLUE} />
+          <Upload size={15} color={COLORS.accentBlue} />
         )}
         <Text style={styles.uploadButtonText}>{uploadButtonLabel}</Text>
       </Pressable>
@@ -196,10 +192,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 42,
     gap: SPACING.sm,
-    backgroundColor: ACCENT_BLUE_BG,
+    backgroundColor: COLORS.accentBlueBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: ACCENT_BLUE_BORDER,
+    borderColor: COLORS.accentBlueBorder,
     borderRadius: BORDER_RADIUS.lg,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.md,
@@ -210,7 +207,7 @@ const styles = StyleSheet.create({
   uploadButtonText: {
     ...TYPOGRAPHY.scale.sm,
     fontWeight: TYPOGRAPHY.fontWeight.semibold,
-    color: ACCENT_BLUE,
+    color: COLORS.accentBlue,
   },
   grid: {
     flexDirection: 'row',

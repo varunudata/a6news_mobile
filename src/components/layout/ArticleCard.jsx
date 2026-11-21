@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   body: {
-    padding: SPACING.xl,
+    padding: SPACING.lg,
   },
   title: {
     ...TYPOGRAPHY.scale.baseSnug,
@@ -214,11 +214,11 @@ const styles = StyleSheet.create({
   excerpt: {
     ...TYPOGRAPHY.scale.smRelaxed,
     color: COLORS.textMuted,
-    marginTop: 10,
+    marginTop: SPACING.sm,
   },
   footerRow: {
-    marginTop: SPACING.lg,
-    paddingTop: SPACING.lg,
+    marginTop: SPACING.md,
+    paddingTop: SPACING.md,
     borderTopWidth: LAYOUT.borderWidth,
     borderTopColor: COLORS.borderSubtle,
     flexDirection: 'row',

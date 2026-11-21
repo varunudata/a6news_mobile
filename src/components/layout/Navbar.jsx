@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   logoBox: {
-    height: 36,
+    height: 38,
     paddingRight: 10,
     borderRightWidth: LAYOUT.borderWidth,
     borderRightColor: COLORS.borderCard,
@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   logoImage: {
-    width: 104,
-    height: 32,
+    width: 112,
+    height: 34,
   },
   fallbackBrand: {
     flexDirection: 'row',

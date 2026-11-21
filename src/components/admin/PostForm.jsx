@@ -178,6 +178,7 @@ export function PostForm({
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
       >
         <Pressable
@@ -423,9 +424,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: COLORS.successBg,
     borderWidth: LAYOUT.borderWidth,
-    borderColor: '#BBF7D0',
+    borderColor: COLORS.successBorder,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
   },
